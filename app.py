@@ -32,15 +32,31 @@ def send_async_email(app, msg):
         mail.send(msg)
 
 def send_email(subject, recipients, body):
-    msg = Message(subject, recipients=recipients, body=body)
-    thr = threading.Thread(target=send_async_email, args=[app, msg])
-    thr.start()
+    url = "https://api.brevo.com/v3/smtp/email"
+    API_KEY = "xkeysib-..." 
+    
+    payload = {
+        "sender": {"name": "متجر غرسة", "email": "support@gharsah.shop"},
+        "to": [{"email": recipients[0]}],
+        "subject": subject,
+        "textContent": body
+    }
+    headers = {
+        "accept": "application/json",
+        "api-key": API_KEY,
+        "content-type": "application/json"
+    }
+    
+    try:
+        requests.post(url, json=payload, headers=headers)
+    except Exception as e:
+        print(f"Error: {e}")
+
 users = {}
 orders_db = {} 
 
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') 
-
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
 @app.route('/styles.css')
 def styles():
     return send_from_directory('.', 'styles.css')
@@ -125,35 +141,28 @@ def update_order_status():
         
     return jsonify({'success': False, 'message': 'تعذر العثور على الطلب.'})
 
-@app.route('/register', methods=['POST'])
-def register():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
+# ضعي هذا في مكان الدوال القديمة
+def send_email(subject, recipients, body):
+    url = "https://api.brevo.com/v3/smtp/email"
+    # ضعي هنا مفتاح الـ API الخاص بكِ (ينتهي بـ ...api-key)
+    API_KEY = "xkeysib-..." 
     
-    if email in users:
-        if users[email]['is_verified']:
-            return "<h3>هذا البريد الإلكتروني مسجل ومفعل مسبقاً!</h3><a href='/auth'>العودة للدخول</a>"
-        else:
-            token = s.dumps(email, salt='email-confirm-salt')
-            link = url_for('verify_account', token=token, _external=True)
-            
-            try:
-                send_email("إعادة إرسال: تأكيد حسابك", [email], f"مرحباً {users[email]['username']}، يرجى تفعيل حسابك: {link}")
-                return "<h2>تم إعادة إرسال التفعيل بنجاح! 🎉</h2><p>تفقد بريدك.</p><br><a href='/auth'>العودة للدخول</a>"
-            except Exception as e:
-                return f"خطأ في إعادة إرسال البريد: {str(e)}"
-    
-    users[email] = {'username': username, 'password': password, 'is_verified': False}
-    
-    token = s.dumps(email, salt='email-confirm-salt')
-    link = url_for('verify_account', token=token, _external=True)
+    payload = {
+        "sender": {"name": "متجر غرسة", "email": "support@gharsah.shop"},
+        "to": [{"email": recipients[0]}],
+        "subject": subject,
+        "textContent": body
+    }
+    headers = {
+        "accept": "application/json",
+        "api-key": API_KEY,
+        "content-type": "application/json"
+    }
     
     try:
-        send_email("تأكيد حسابك في متجر غرسة 🌿", [email], f"مرحباً {username}، يرجى تفعيل حسابك عبر الرابط: {link}")
-        return "<h2>تم إنشاء الحساب بنجاح! 🎉</h2><p>تفقد بريدك الإلكتروني للتفعيل.</p><br><a href='/auth'>الذهاب للدخول</a>"
+        requests.post(url, json=payload, headers=headers)
     except Exception as e:
-        return f"حدث خطأ أثناء إرسال البريد: {str(e)} <br> الحساب تم إنشاؤه محلياً في السيرفر."
+        print(f"Error: {e}")
 @app.route('/verify/<token>')
 def verify_account(token):
     try:
@@ -193,10 +202,9 @@ def forgot_password():
             token = s.dumps(email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
             
-            msg = Message("استعادة كلمة المرور - متجر غرسة 🌿", recipients=[email])
-            msg.body = f"مرحباً،\n\nلقد طلبت استعادة كلمة المرور لحسابك في متجر غرسة.\nيرجى الضغط على الرابط التالي لتعيين كلمة مرور جديدة (الرابط صالحة لمدة 10 دقائق):\n\n{link}"
+            # هنا التعديل: استخدام دالة الإرسال الجديدة
             try:
-                mail.send(msg)
+                send_email("استعادة كلمة المرور - متجر غرسة 🌿", [email], f"مرحباً،\n\nلقد طلبت استعادة كلمة المرور لحسابك في متجر غرسة. يرجى الضغط على الرابط التالي لتعيين كلمة مرور جديدة:\n\n{link}")
                 return "تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني بنجاح! تفقد صندوق الوارد أو البريد المهمل."
             except Exception as e:
                 return f"حدث خطأ أثناء إرسال البريد: {str(e)}"
