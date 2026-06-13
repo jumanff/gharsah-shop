@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - متجر غرسة 🌿</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .navbar {
+            background-color: #1b4332;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 16px;
+        }
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .profile-header {
+            border-bottom: 2px solid #eaf4f0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .profile-header .avatar {
+            background-color: #2d6a4f;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .profile-header h2 {
+            margin: 0;
+            color: #1b4332;
+        }
+        .profile-header p {
+            margin: 5px 0 0 0;
+            color: #666;
+        }
+
+       
+        h3 {
+            color: #2d6a4f;
+            margin-bottom: 15px;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            text-align: right;
+        }
+        .order-table th, .order-table td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+        }
+        .order-table th {
+            background-color: #2d6a4f;
+            color: white;
+            font-weight: bold;
+        }
+        .order-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .status-badge {
+            color: #2d6a4f;
+            font-weight: bold;
+        }
+        
+        .no-orders {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 30px;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+        }
+
+        
+        .actions-btn {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-main {
+            background-color: #2d6a4f;
+            color: white;
+        }
+        .btn-main:hover {
+            background-color: #1b4332;
+        }
+        .btn-logout {
+            background-color: #d90429;
+            color: white;
+        }
+        .btn-logout:hover {
+            background-color: #b3001b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="/?user={{ email }}" class="logo">متجر غرسة 🌿</a>
+        <div class="nav-links">
+            <a href="/?user={{ email }}">الرئيسية</a>
+            <a href="/auth">تسجيل الخروج</a>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        
+        <div class="profile-header">
+            <div class="avatar">
+                {{ username[0] | upper if username else 'ع' }}
+            </div>
+            <div>
+                <h2>أهلاً بكِ، {{ username }} ✨</h2>
+                <p>حسابكِ الشخصي مسجل بالبريد: <strong>{{ email }}</strong></p>
+            </div>
+        </div>
+
+        <h3>📦 سجل مشترياتكِ وفواتيركِ الحالية:</h3>
+        
+        {% if orders %}
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th> 
+                        <th>المنتجات والنباتات المطلوبة</th>
+                        <th>إجمالي المدفوعات</th>
+                        <th>حالة الشحن والتوصيل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>{{ order.order_id }}</strong></td> <!-- ✨ وضعه في خانته الصحيحة المستقلة -->
+                        <td>{{ order.plants_list }}</td>
+                        <td><strong>{{ order.total }} ر.س</strong></td>
+                        <td class="status-badge">{{ order.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-orders">
+                <p>لا توجد لديكِ أي طلبات شراء مسجلة حتى الآن في متجر غرسة. ابدئي بالتسوق الآن! 🛒</p>
+            </div>
+        {% endif %}
+
+        <div class="actions-btn">
+            <a href="/?user={{ email }}" class="btn btn-main">🛒 العودة للتسوق</a>
+            <a href="/auth" class="btn btn-logout">تسجيل الخروج</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

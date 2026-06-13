@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - متجر غرسة 🔐</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .admin-container { max-width: 1100px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { color: #1b4332; border-bottom: 2px solid #eaf4f0; padding-bottom: 10px; }
+        .order-table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: right; }
+        .order-table th, .order-table td { border: 1px solid #e0e0e0; padding: 12px 15px; }
+        .order-table th { background-color: #2d6a4f; color: white; }
+        .order-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .btn-update { background-color: #2d6a4f; color: white; border: none; padding: 7px 12px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>🔐 لوحة تحكم الإدارة العامة (إدارة الطلبات) - متجر غرسة 🌿</h2>
+        <h3>قائمة الفواتير والعمليات الحالية 📦</h3>
+        {% if orders %}
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th> 
+                        <th>اسم العميل</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>العنوان وتفاصيل الاتصال 📍</th>
+                        <th>النباتات المشتراة</th>
+                        <th>المبلغ المدفوع</th>
+                        <th>الحالة والتحكم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>{{ order.order_id }}</strong></td> 
+                        <td><strong>{{ order.name }}</strong></td>
+                        <td>{{ order.email }}</td>
+                        <td style="font-size: 13px; color: #555; line-height: 1.4;">{{ order.address }}</td>
+                        <td style="color: #2d6a4f; font-weight: bold;">{{ order.plants_list }}</td>
+                        <td><strong>{{ order.total }} ر.س</strong></td>
+                        <td>
+                            <form action="/admin/update_status" method="POST" style="display: flex; gap: 10px;">
+                                <input type="hidden" name="email" value="{{ order.email }}">
+                                <input type="hidden" name="index" value="{{ order.index }}">
+                                <select name="status">
+                                    <option value="قيد التجهيز ⏳" {% if order.status == 'قيد التجهيز ⏳' %}selected{% endif %}>قيد التجهيز ⏳</option>
+                                    <option value="جاري التوصيل 🚚" {% if order.status == 'جاري التوصيل 🚚' %}selected{% endif %}>جاري التوصيل 🚚</option>
+                                    <option value="تم التنفيذ والتسليم ✅" {% if order.status == 'تم التنفيذ والتسليم ✅' %}selected{% endif %}>تم التنفيذ والتسليم ✅</option>
+                                </select>
+                                <button type="submit" class="btn-update">تحديث</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center; color: #777;">لا توجد طلبات حالياً.</p>
+        {% endif %}
+        <br><a href="/">🏠 العودة للمتجر</a>
+    </div>
+</body>
+</html>

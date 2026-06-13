@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>متجر غرسة للنباتات 🌿</title>
+    <style>
+      .user-dropdown { position: relative; display: inline-block; }
+      .dropdown-btn { background: none; border: none; color: #2d6a4f; font-weight: bold; font-size: 16px; cursor: pointer; padding: 10px; }
+      .dropdown-content { display: none; position: absolute; background-color: #ffffff; min-width: 180px; box-shadow: 0px 8px 16px rgba(0,0,0,0.1); border-radius: 6px; z-index: 1000; right: 0; }
+      .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; font-size: 14px; text-align: right; }
+      .dropdown-content a:hover { background-color: #eaf4f0; color: #2d6a4f; }
+      .user-dropdown:hover .dropdown-content { display: block; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo-area">
+         <h1 class="logo-text" style="cursor:pointer;" onclick="goToHome()">غرسة 🌿</h1>
+      </div>
+      <nav class="navigation">
+        <ul>
+          <li><a href="#hero">الرئيسية</a></li>
+          <li><a href="#products">نباتاتنا</a></li>
+          <li><a href="#aboutStore">من نحن</a></li>
+          <li id="auth-zone"><a href="/auth" class="auth-nav-btn">تسجيل الدخول / حساب جديد</a></li>
+        </ul>
+      </nav>
+      <div class="cart-icon-container" style="cursor:pointer;" onclick="toggleCart()">
+        <span id="cart-count">0</span>
+        <button class="cart-btn">🛒 السلة</button>
+      </div>
+    </header>
+    <hr />
+
+    <section class="hero" id="hero">
+      <div class="heroSub">
+        <h1 class="name">مرحباً بك في متجر غرسة</h1>
+        <h1 class="title">أضف الحياة إلى مساحتك</h1>
+        <p class="hero-desc">اكتشف مجموعتنا المختارة من النباتات الطبيعية الفريدة لتزيين منزلك أو مكتبك بسهولة وبضغطة زر.</p>
+        <div class="heroBtns"><a class="hireMe" href="#products">تصفح النباتات الآن</a></div>
+      </div>
+      <img src="{{ url_for('static', filename='hero-banner.jpg') }}" alt="plant hero" class="heroImg" />
+    </section>
+
+    <div id="cart-sidebar" class="cart-sidebar" style="overflow-y: auto; max-height: 100vh;">
+      <div class="sidebar-header">
+        <h2>سلة المشتريات</h2>
+        <button class="close-btn" onclick="toggleCart()">✕</button>
+      </div>
+      <div id="cart-items"><p class="empty-msg">السلة فارغة حالياً</p></div>
+      
+      <div class="shipping-info-form" style="padding: 15px; background: #f4f9f6; border-radius: 8px; margin: 15px 0; border: 1px solid #e2eee7; text-align: right;">
+        <h3 style="color: #2d6a4f; margin-top: 0; font-size: 16px; border-bottom: 1px solid #2d6a4f; padding-bottom: 5px;">📍 تفاصيل عنوان الشحن</h3>
+        
+        <label style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#333;">المدينة:</label>
+        <input type="text" id="ship-city" placeholder="مثال: بريدة، الرياض" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box;">
+        
+        <label style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#333;">الحي:</label>
+        <input type="text" id="ship-district" placeholder="مثال: حي الأفق، حي النرجس" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box;">
+        
+        <label style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#333;">العنوان الوطني:</label>
+        <input type="text" id="ship-national" placeholder="مثال: 1234 أو الرمز المميز" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box;">
+        
+        <label style="display:block; font-size:12px; font-weight:bold; margin-bottom:4px; color:#333;">رقم الجوال:</label>
+        <input type="tel" id="ship-phone" placeholder="مثال: 05XXXXXXXX" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box;">
+      </div>
+
+      <div class="cart-summary">
+        <h3>الإجمالي: <span id="cart-total">0</span> ر.س</h3>
+        <button class="checkout-btn" onclick="checkout()">إتمام الشراء والدفع</button>
+      </div>
+    </div>
+
+    <section class="works" id="products">
+      <div class="worksContainer">
+        <div class="projectTitle">
+          <h1 class="aboutName">نباتاتنا </h1>
+          <h1 class="aboutTitle">المميزة</h1>
+        </div>
+        
+        <div class="products-grid">
+          <div class="product-card" data-id="1" data-name="نبتة المونستيرا" data-price="85">
+            <img src="{{ url_for('static', filename='monstera.jpg') }}" alt="Monstera" />
+            <h3>نبتة المونستيرا</h3>
+            <p class="price">85 ر.س</p>
+            <button class="add-to-cart-btn">أضف إلى السلة</button>
+          </div>
+
+          <div class="product-card" data-id="2" data-name="نبتة جلد النمر" data-price="45">
+            <img src="{{ url_for('static', filename='snake-plant.jpg') }}" alt="Snake Plant" />
+            <h3>نبتة جلد النمر</h3>
+            <p class="price">45 ر.س</p>
+            <button class="add-to-cart-btn">أضف إلى السلة</button>
+          </div>
+
+          <div class="product-card" data-id="3" data-name="نبتة البوتس" data-price="30">
+            <img src="{{ url_for('static', filename='pothos2.jpg') }}" alt="Pothos" />
+            <h3>نبتة البوتس</h3>
+            <p class="price">30 ر.س</p>
+            <button class="add-to-cart-btn">أضف إلى السلة</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="aboutMe" id="aboutStore">
+      <img src="{{ url_for('static', filename='about-gharsah.jpg') }}" alt="about store" class="aboutMeImg" />
+      <div class="textContainer">
+        <div class="textTitle"><h1 class="aboutName">عن</h1><h1 class="aboutTitle">غرسة</h1></div>
+        <p class="aboutMePar">نحن في متجر "غرسة" نؤمن أن النباتات ليست مجرد زينة، بل هي روح تضاف للمكان. نختار لكم أفضل النباتات الداخلية والخارجية بعناية فائقة.</p>
+      </div>
+    </section>
+
+    <footer><p>جميع الحقوق محفوظة لمتجر غرسة © 2026</p></footer>
+
+    <script>
+      let cart = [];
+
+      document.addEventListener("DOMContentLoaded", () => {
+          const userEmailFromSession = "{{ user_email }}";
+          const userNameFromSession = "{{ username }}";
+
+          if (userEmailFromSession && userEmailFromSession !== "" && userEmailFromSession !== "None") {
+              const authZone = document.getElementById('auth-zone');
+              let displayName = userNameFromSession && userNameFromSession !== "None" ? userNameFromSession : userEmailFromSession.split('@')[0];
+              
+              authZone.innerHTML = `
+              <div class="user-dropdown">
+                  <button class="dropdown-btn">👤 أهلاً بكِ، ${displayName} ✨ ▾</button>
+                  <div class="dropdown-content">
+                  <a href="/profile">📦 طلباتي وفواتيري</a>
+                  <a href="/logout">🚪 تسجيل الخروج</a>
+                  </div>
+              </div>
+              `;
+          }
+
+          document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+              button.addEventListener('click', (e) => {
+                  const card = e.target.closest('.product-card');
+                  const id = card.getAttribute('data-id');
+                  const name = card.getAttribute('data-name');
+                  const price = parseFloat(card.getAttribute('data-price'));
+                  addToCart(id, name, price);
+              });
+          });
+      });
+
+      function addToCart(id, name, price) {
+          const existingItem = cart.find(item => item.id === id);
+          if (existingItem) {
+              existingItem.quantity += 1;
+          } else {
+              cart.push({ id: id, name: name, price: price, quantity: 1 });
+          }
+          updateCartUI();
+          alert(`🌿 تم إضافة ${name} إلى سلتك بنجاح!`);
+      }
+
+      function updateCartUI() {
+          const cartItemsContainer = document.getElementById('cart-items');
+          const cartCount = document.getElementById('cart-count');
+          const cartTotal = document.getElementById('cart-total');
+          cartItemsContainer.innerHTML = '';
+          
+          if (cart.length === 0) {
+              cartItemsContainer.innerHTML = '<p class="empty-msg">السلة فارغة حالياً</p>';
+              cartCount.innerText = '0'; 
+              cartTotal.innerText = '0'; 
+              return;
+          }
+          
+          let total = 0; 
+          let totalCount = 0;
+          
+          cart.forEach((item, index) => {
+              total += item.price * item.quantity; 
+              totalCount += item.quantity;
+              const itemEl = document.createElement('div');
+              itemEl.style.display = "flex";
+              itemEl.style.justify = "space-between";
+              itemEl.style.alignItems = "center";
+              itemEl.style.marginBottom = "10px";
+              itemEl.innerHTML = `
+              <span>${item.name} (${item.price} ر.س)</span>
+              <div>
+                  <button onclick="changeQuantity(${index}, -1)" style="padding:2px 8px; cursor:pointer; background:#2d6a4f; color:white; border:none; border-radius:4px;">-</button>
+                  <span style="margin:0 8px; font-weight:bold;">${item.quantity}</span>
+                  <button onclick="changeQuantity(${index}, 1)" style="padding:2px 8px; cursor:pointer; background:#2d6a4f; color:white; border:none; border-radius:4px;">+</button>
+              </div>
+              `;
+              cartItemsContainer.appendChild(itemEl);
+          });
+          cartCount.innerText = totalCount; 
+          cartTotal.innerText = total;
+      }
+
+      function changeQuantity(index, change) {
+          cart[index].quantity += change;
+          if (cart[index].quantity <= 0) {
+              cart.splice(index, 1);
+          }
+          updateCartUI();
+      }
+
+      function toggleCart() { 
+          document.getElementById('cart-sidebar').classList.toggle('active'); 
+      }
+
+      function checkout() {
+          if (cart.length === 0) { 
+              alert('سلتك فارغة! قمي باختيار بعض النباتات أولاً 🌿'); 
+              return; 
+          }
+
+          const city = document.getElementById('ship-city').value.trim();
+          const district = document.getElementById('ship-district').value.trim();
+          const nationalAddress = document.getElementById('ship-national').value.trim();
+          const phone = document.getElementById('ship-phone').value.trim();
+
+          if (!city || !district || !nationalAddress || !phone) {
+              alert('⚠️ يرجى تعبئة كامل معلومات الشحن (المدينة، الحي، العنوان الوطني، ورقم الجوال) لتسجيل طلبك!');
+              return;
+          }
+
+          if (phone.length < 9 || isNaN(phone)) {
+              alert('⚠️ يرجى إدخال رقم جوال صحيح مكون من أرقام فقط!');
+              return;
+          }
+
+          const userEmailFromSession = "{{ user_email }}";
+
+          if (!userEmailFromSession || userEmailFromSession === "" || userEmailFromSession === "None") { 
+              alert('🛍️ سلتك وبيانات عنوانك محفوظة! يرجى تسجيل الدخول أو إنشاء حساب سريع أولاً لإتمام الشحن والدفع بنجاح.'); 
+              window.location.href = '/auth'; 
+              return; 
+          }
+
+          const cleanCart = cart.map(item => ({
+              name: String(item.name),
+              quantity: Number(item.quantity),
+              price: Number(item.price)
+          }));
+
+          let calculatedTotal = 0;
+          cleanCart.forEach(item => {
+              calculatedTotal += item.price * item.quantity;
+          });
+
+          fetch('/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                  items: cleanCart, 
+                  total: String(calculatedTotal),
+                  address_info: {
+                      city: String(city),
+                      district: String(district),
+                      national_address: String(nationalAddress),
+                      phone: String(phone)
+                  }
+              })
+          })
+          .then(res => res.json())
+          .then(data => {
+              if(data.success && data.stripe_url) {
+                  window.location.href = data.stripe_url; 
+              } else {
+                  alert(data.message || '⚠️ تعذر الانتقال لبوابة الدفع، حاول مجدداً.');
+              }
+          })
+          .catch(err => alert('⚠️ حدث خطأ أثناء الاتصال ببوابة الدفع، يرجى المحاولة مجدداً.'));
+      }
+
+      function goToHome() { window.location.href = '/'; }
+    </script>
+  </body>
+</html>

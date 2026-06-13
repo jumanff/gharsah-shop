@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول الإدارة - غرسة 🔐</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 { color: #1b4332; margin-bottom: 25px; }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        .input-group label { display: block; margin-bottom: 8px; color: #555; font-weight: bold; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        .error-message { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 11px; margin-bottom: 20px; border-radius: 6px; display: none; font-size: 14px; font-weight: bold; text-align: right; }
+        .login-btn { width: 100%; padding: 12px; background-color: #2d6a4f; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .login-btn:hover { background-color: #1b4332; }
+        .back-link { display: inline-block; margin-top: 15px; color: #2d6a4f; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>تسجيل دخول المسؤولين 🔐🌿</h2>
+    <div id="error-box" class="error-message"></div>
+
+    <form id="adminLoginForm">
+        <div class="input-group">
+            <label>البريد الإلكتروني للإدارة:</label>
+            <input type="email" id="adminEmail" required placeholder="admin@example.com">
+        </div>
+        <div class="input-group">
+            <label>كلمة المرور السرية:</label>
+            <input type="password" id="adminPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="login-btn">دخول لوحة التحكم</button>
+    </form>
+    <a href="/" class="back-link">🏠 العودة للمتجر الرئيسي</a>
+</div>
+
+<script>
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        const errorBox = document.getElementById('error-box');
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPassword').value;
+        
+        let formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
+        
+        fetch('/admin/login', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) { window.location.href = data.redirect; } 
+            else { errorBox.innerText = data.message; errorBox.style.display = 'block'; }
+        })
+        .catch(err => { errorBox.innerText = "⚠️ حدث خطأ في الاتصال بالسيرفر."; errorBox.style.display = 'block'; });
+    });
+</script>
+</body>
+</html>
