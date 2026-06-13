@@ -70,7 +70,6 @@ def send_email_api(to_email, subject, body):
     except Exception as e:
         print(f"Email error: {e}")
 
-mail = Mail(app)
 
 s = URLSafeTimedSerializer(app.secret_key)
 
@@ -282,7 +281,7 @@ def register():
 
             
 
-            msg = Message("إعادة إرسال: تأكيد حسابك في متجر غرسة 🌿", recipients=[email])
+send_email_api(email, "تأكيد حسابك في متجر غرسة 🌿", f"مرحباً {username}، فعل حسابك عبر الرابط: {link}")
 
             msg.body = f"مرحباً {users[email]['username']}،\n\nيرجى الضغط على الرابط التالي لتفعيل حسابك (الرابط صالحة لمدة ساعة):\n\n{link}"
 
@@ -402,7 +401,7 @@ def forgot_password():
 
             
 
-            msg = Message("استعادة كلمة المرور - متجر غرسة 🌿", recipients=[email])
+send_email_api(email, "استعادة كلمة المرور - متجر غرسة 🌿", f"مرحباً، لقد طلبت استعادة كلمة المرور. رابطك: {link}")
 
             msg.body = f"مرحباً،\n\nلقد طلبت استعادة كلمة المرور لحسابك في متجر غرسة.\nيرجى الضغط على الرابط التالي لتعيين كلمة مرور جديدة (الرابط صالحة لمدة 10 دقائق):\n\n{link}"
 
