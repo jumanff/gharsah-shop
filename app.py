@@ -138,24 +138,22 @@ def register():
             token = s.dumps(email, salt='email-confirm-salt')
             link = url_for('verify_account', token=token, _external=True)
             
-            msg = Message("إعادة إرسال: تأكيد حسابك في متجر غرسة 🌿", recipients=[email])
-            msg.body = f"مرحباً {users[email]['username']}،\n\nيرجى الضغط على الرابط التالي لتفعيل حسابك (الرابط صالحة لمدة ساعة):\n\n{link}"
             try:
-               send_email("إعادة إرسال: تأكيد حسابك", [email], f"تفعيل حسابك: {link}")
-            return "<h2>تم إعادة إرسال التفعيل!</h2>"
+                send_email("إعادة إرسال: تأكيد حسابك", [email], f"مرحباً {users[email]['username']}، يرجى تفعيل حسابك: {link}")
+                return "<h2>تم إعادة إرسال التفعيل بنجاح! 🎉</h2><p>تفقد بريدك.</p><br><a href='/auth'>العودة للدخول</a>"
+            except Exception as e:
+                return f"خطأ في إعادة إرسال البريد: {str(e)}"
     
     users[email] = {'username': username, 'password': password, 'is_verified': False}
     
     token = s.dumps(email, salt='email-confirm-salt')
     link = url_for('verify_account', token=token, _external=True)
     
-    msg = Message("تأكيد حسابك في متجر غرسة 🌿", recipients=[email])
-    msg.body = f"مرحباً {username}،\n\nيرجى تفعيل حسابك عبر الرابط الآمن التالي:\n\n{link}"
     try:
-send_email("تأكيد حسابك في متجر غرسة 🌿", [email], f"مرحباً {username}، فعل حسابك: {link}")
-    
-    return "<h2>تم إنشاء الحساب بنجاح! 🎉</h2><p>تفقد بريدك.</p><br><a href='/auth'>الذهاب للدخول</a>"
-
+        send_email("تأكيد حسابك في متجر غرسة 🌿", [email], f"مرحباً {username}، يرجى تفعيل حسابك عبر الرابط: {link}")
+        return "<h2>تم إنشاء الحساب بنجاح! 🎉</h2><p>تفقد بريدك الإلكتروني للتفعيل.</p><br><a href='/auth'>الذهاب للدخول</a>"
+    except Exception as e:
+        return f"حدث خطأ أثناء إرسال البريد: {str(e)} <br> الحساب تم إنشاؤه محلياً في السيرفر."
 @app.route('/verify/<token>')
 def verify_account(token):
     try:
