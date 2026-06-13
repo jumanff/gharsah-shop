@@ -50,7 +50,25 @@ app.config['MAIL_PASSWORD'] = '0vUzKqm79BZ6tH2A'
 
 app.config['MAIL_DEFAULT_SENDER'] = 'support@gharsah.shop'
 
+BREVO_API_KEY = "ضعي_المفتاح_الجديد_هنا"
 
+def send_email_api(to_email, subject, body):
+    url = "https://api.brevo.com/v3/smtp/email"
+    payload = {
+        "sender": {"name": "غرسة", "email": "support@gharsah.shop"},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "textContent": body
+    }
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+    try:
+        requests.post(url, json=payload, headers=headers)
+    except Exception as e:
+        print(f"Email error: {e}")
 
 mail = Mail(app)
 
