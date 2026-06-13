@@ -1,7 +1,7 @@
 import os
 import tempfile
 import random  
-
+import threading
 os.environ['TMPDIR'] = '/tmp'
 tempfile.tempdir = '/tmp'
 
@@ -27,7 +27,14 @@ app.config['MAIL_DEFAULT_SENDER'] = 'support@gharsah.shop'
 
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.secret_key)
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
 
+def send_email(subject, recipients, body):
+    msg = Message(subject, recipients=recipients, body=body)
+    thr = threading.Thread(target=send_async_email, args=[app, msg])
+    thr.start()
 users = {}
 orders_db = {} 
 
@@ -134,10 +141,8 @@ def register():
             msg = Message("إعادة إرسال: تأكيد حسابك في متجر غرسة 🌿", recipients=[email])
             msg.body = f"مرحباً {users[email]['username']}،\n\nيرجى الضغط على الرابط التالي لتفعيل حسابك (الرابط صالحة لمدة ساعة):\n\n{link}"
             try:
-                mail.send(msg)
-                return "<h2>تم إعادة إرسال رابط التفعيل الآمن بنجاح! 🎉</h2><p>تفقد بريدك الوارد.</p><br><a href='/auth'>العودة لصفحة الدخول</a>"
-            except Exception as e:
-                return f"خطأ في الإرسال: {str(e)}"
+               send_email("إعادة إرسال: تأكيد حسابك", [email], f"تفعيل حسابك: {link}")
+            return "<h2>تم إعادة إرسال التفعيل!</h2>"
     
     users[email] = {'username': username, 'password': password, 'is_verified': False}
     
@@ -147,10 +152,9 @@ def register():
     msg = Message("تأكيد حسابك في متجر غرسة 🌿", recipients=[email])
     msg.body = f"مرحباً {username}،\n\nيرجى تفعيل حسابك عبر الرابط الآمن التالي:\n\n{link}"
     try:
-        mail.send(msg)
-        return "<h2>تم إنشاء الحساب بنجاح! 🎉</h2><p>تفقد بريدك الإلكتروني لتفعيله عبر الرابط المشفر المرسل إليك، ثم يمكنك تسجيل الدخول.</p><br><a href='/auth'>الذهاب لتسجيل الدخول</a>"
-    except Exception as e:
-        return f"حدث خطأ أثناء إرسال البريد: {str(e)} <br> الحساب تم إنشاؤه محلياً في السيرفر."
+send_email("تأكيد حسابك في متجر غرسة 🌿", [email], f"مرحباً {username}، فعل حسابك: {link}")
+    
+    return "<h2>تم إنشاء الحساب بنجاح! 🎉</h2><p>تفقد بريدك.</p><br><a href='/auth'>الذهاب للدخول</a>"
 
 @app.route('/verify/<token>')
 def verify_account(token):
