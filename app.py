@@ -17,11 +17,12 @@ app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'sandbox.smtp.mailtrap.io')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 2525))
+app.config['MAIL_SERVER'] = 'smtp-relay.brevo.com'
+app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_USE_SSL'] = False # جربي تعطيل SSL
+app.config['MAIL_USERNAME'] = 'ae9d28001@smtp-brevo.com'
+app.config['MAIL_PASSWORD'] = '0vUzKqm79BZ6tH2A'
 app.config['MAIL_DEFAULT_SENDER'] = 'support@gharsah.shop'
 
 mail = Mail(app)
