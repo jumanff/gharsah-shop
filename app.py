@@ -26,7 +26,9 @@ def send_email_api(to_email, subject, body):
         "content-type": "application/json"
     }
     try:
-        requests.post(url, json=payload, headers=headers)
+        response = requests.post(url, json=payload, headers=headers)
+        # هذا السطر سيطبع لك حالة الإرسال في سجلات Render
+        print(f"Brevo API Response: {response.status_code} - {response.text}")
     except Exception as e:
         print(f"Email error: {e}")
 
