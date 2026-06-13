@@ -22,15 +22,19 @@ def send_email_api(to_email, subject, body):
     }
     headers = {
         "accept": "application/json",
-        "api-key": BREVO_API_KEY,
+        "api-key": BREVO_API_KEY, # تأكد أن هذا المتغير يُقرأ بشكل صحيح
         "content-type": "application/json"
     }
+    
+    # إضافة طباعة للتأكد من وجود المفتاح
+    print(f"DEBUG: Using API Key starting with: {str(BREVO_API_KEY)[:5]}...") 
+    
     try:
         response = requests.post(url, json=payload, headers=headers)
-        # هذا السطر سيطبع لك حالة الإرسال في سجلات Render
-        print(f"Brevo API Response: {response.status_code} - {response.text}")
+        print(f"DEBUG: Response Status: {response.status_code}")
+        print(f"DEBUG: Response Body: {response.text}")
     except Exception as e:
-        print(f"Email error: {e}")
+        print(f"DEBUG: Connection Error: {e}")
 
 s = URLSafeTimedSerializer(app.secret_key)
 users = {}
