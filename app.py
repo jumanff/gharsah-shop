@@ -20,21 +20,18 @@ def send_email_api(to_email, subject, body):
         "subject": subject,
         "textContent": body
     }
+    # ضع المفتاح هنا مباشرة بين علامات التنصيص (تأكد من نسخه كاملاً)
     headers = {
         "accept": "application/json",
-        "api-key": BREVO_API_KEY, # تأكد أن هذا المتغير يُقرأ بشكل صحيح
+        "api-key": "xkeysib-a3ef855054281265777ddb37dff87ed3a123985d4bf2b4f082f617e44aef4b9-6YvYmz2QFVutznkm",
         "content-type": "application/json"
     }
-    
-    # إضافة طباعة للتأكد من وجود المفتاح
-    print(f"DEBUG: Using API Key starting with: {str(BREVO_API_KEY)[:5]}...") 
-    
     try:
         response = requests.post(url, json=payload, headers=headers)
-        print(f"DEBUG: Response Status: {response.status_code}")
-        print(f"DEBUG: Response Body: {response.text}")
+        print(f"DEBUG: Status Code: {response.status_code}")
+        print(f"DEBUG: Response: {response.text}")
     except Exception as e:
-        print(f"DEBUG: Connection Error: {e}")
+        print(f"DEBUG: Error: {e}")
 
 s = URLSafeTimedSerializer(app.secret_key)
 users = {}
